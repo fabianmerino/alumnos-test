@@ -5,7 +5,9 @@
  */
 package alumnos;
 
+import java.awt.Color;
 import java.sql.*;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
 
@@ -17,6 +19,7 @@ public class frmAlumnos extends javax.swing.JFrame {
 
     final Conexion conn;
     ArrayList<Alumno> alumnos = new ArrayList<>();
+    Boolean editando = false;
 
     /**
      * Creates new form froAlumnos
@@ -47,8 +50,8 @@ public class frmAlumnos extends javax.swing.JFrame {
         txtNota1 = new javax.swing.JTextField();
         txtNota2 = new javax.swing.JTextField();
         txtNota3 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        btnCalcular = new javax.swing.JButton();
+        btnNuevo = new javax.swing.JButton();
         lblPromedio = new javax.swing.JLabel();
         txtPromedio = new javax.swing.JTextField();
         lblDetalleCondition = new javax.swing.JLabel();
@@ -57,6 +60,7 @@ public class frmAlumnos extends javax.swing.JFrame {
         tbAlumnos = new javax.swing.JTable();
         btnAgregar = new javax.swing.JButton();
         lblLista = new javax.swing.JLabel();
+        btnDetalle = new javax.swing.JButton();
 
         dlgAgregar.setTitle("Agregar alumno");
         dlgAgregar.setLocationByPlatform(true);
@@ -68,8 +72,6 @@ public class frmAlumnos extends javax.swing.JFrame {
         jLabel2.setLabelFor(txtNombres);
         jLabel2.setText("Nombres:");
 
-        txtNombres.setToolTipText("");
-
         jLabel3.setLabelFor(txtNota1);
         jLabel3.setText("Nota 01:");
 
@@ -78,12 +80,6 @@ public class frmAlumnos extends javax.swing.JFrame {
 
         jLabel5.setLabelFor(txtNota3);
         jLabel5.setText("Nota 01:");
-
-        txtNota1.setToolTipText("");
-
-        txtNota2.setToolTipText("");
-
-        txtNota3.setToolTipText("");
 
         javax.swing.GroupLayout panDatosLayout = new javax.swing.GroupLayout(panDatos);
         panDatos.setLayout(panDatosLayout);
@@ -111,48 +107,48 @@ public class frmAlumnos extends javax.swing.JFrame {
             panDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panDatosLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(panDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(txtNombres, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(panDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(txtNombres, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
                 .addGap(26, 26, 26)
-                .addGroup(panDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(txtNota1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(panDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(txtNota1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
                 .addGap(18, 18, 18)
-                .addGroup(panDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(txtNota2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(panDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(txtNota2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
                 .addGap(18, 18, 18)
-                .addGroup(panDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(txtNota3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(panDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(txtNota3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jButton1.setText("Calcular");
-
-        jButton2.setText("Nuevo");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        btnCalcular.setText("Calcular");
+        btnCalcular.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                btnCalcularActionPerformed(evt);
+            }
+        });
+
+        btnNuevo.setText("Nuevo");
+        btnNuevo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNuevoActionPerformed(evt);
             }
         });
 
         lblPromedio.setText("Promedio:");
 
-        txtPromedio.setToolTipText("");
-        txtPromedio.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtPromedioActionPerformed(evt);
-            }
-        });
+        txtPromedio.setEditable(false);
 
-        lblDetalleCondition.setBackground(new java.awt.Color(204, 0, 0));
         lblDetalleCondition.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         lblDetalleCondition.setForeground(new java.awt.Color(255, 255, 255));
-        lblDetalleCondition.setText("Condicion*");
         lblDetalleCondition.setOpaque(true);
+        lblDetalleCondition.setPreferredSize(new java.awt.Dimension(61, 25));
 
+        lblCond.setLabelFor(lblDetalleCondition);
         lblCond.setText("Condición:");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -166,8 +162,8 @@ public class frmAlumnos extends javax.swing.JFrame {
                         .addComponent(panDatos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(btnCalcular, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnNuevo, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblPromedio)
@@ -184,18 +180,18 @@ public class frmAlumnos extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jButton1)
+                        .addComponent(btnCalcular)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton2))
+                        .addComponent(btnNuevo))
                     .addComponent(panDatos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblPromedio)
-                    .addComponent(txtPromedio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(txtPromedio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblPromedio))
                 .addGap(19, 19, 19)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(lblCond)
-                    .addComponent(lblDetalleCondition))
+                    .addComponent(lblDetalleCondition, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -246,6 +242,7 @@ public class frmAlumnos extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        tbAlumnos.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(tbAlumnos);
 
         btnAgregar.setText("Agregar");
@@ -259,6 +256,14 @@ public class frmAlumnos extends javax.swing.JFrame {
         lblLista.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         lblLista.setText("Lista de Alumnos:");
 
+        btnDetalle.setText("Ver");
+        btnDetalle.setToolTipText("Ver registro seleccionado");
+        btnDetalle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDetalleActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -270,6 +275,8 @@ public class frmAlumnos extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(lblLista)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnDetalle)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnAgregar)))
                 .addContainerGap())
         );
@@ -279,7 +286,8 @@ public class frmAlumnos extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnAgregar)
-                    .addComponent(lblLista))
+                    .addComponent(lblLista)
+                    .addComponent(btnDetalle))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 359, Short.MAX_VALUE)
                 .addContainerGap())
@@ -292,19 +300,88 @@ public class frmAlumnos extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
-        // TODO add your handling code here:
+        reiniciarFormulario();
         dlgAgregar.pack();
         dlgAgregar.setLocationRelativeTo(this);
         dlgAgregar.setVisible(true);
     }//GEN-LAST:event_btnAgregarActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
+    private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
+        reiniciarFormulario();
+    }//GEN-LAST:event_btnNuevoActionPerformed
 
-    private void txtPromedioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPromedioActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtPromedioActionPerformed
+    private void btnCalcularActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCalcularActionPerformed
+        String Nombres = txtNombres.getText();
+        String Nota1 = txtNota1.getText();
+        String Nota2 = txtNota2.getText();
+        String Nota3 = txtNota3.getText();
+        if (Nombres.equals("")) {
+            txtNombres.requestFocus();
+            return;
+        }
+        if (Nota1.equals("") || Float.parseFloat(Nota1) > 20 || Float.parseFloat(Nota1) < 0) {
+            txtNota1.setText("");
+            txtNota1.requestFocus();
+            return;
+        }
+        if (Nota2.equals("") || Float.parseFloat(Nota2) > 20 || Float.parseFloat(Nota2) < 0) {
+            txtNota2.setText("");
+            txtNota2.requestFocus();
+            return;
+        }
+        if (Nota3.equals("") || Float.parseFloat(Nota3) > 20 || Float.parseFloat(Nota3) < 0) {
+            txtNota3.setText("");
+            txtNota3.requestFocus();
+            return;
+        }
+
+        if (!editando) {
+            Alumno al = new Alumno(Nombres, Float.parseFloat(Nota1), Float.parseFloat(Nota2), Float.parseFloat(Nota3));
+            guardarAlumno(al);
+        }
+
+        Float promedio = (Float.parseFloat(Nota1) + Float.parseFloat(Nota2) + Float.parseFloat(Nota3)) / 3;
+        txtPromedio.setText(new DecimalFormat("##.#").format(promedio));
+
+        String condicion = promedio <= 10.5 ? "desaprobado" : "aprobado";
+        lblDetalleCondition.setBackground(promedio <= 10.5 ? Color.RED : Color.lightGray);
+        lblDetalleCondition.setForeground(promedio <= 10.5 ? Color.WHITE : Color.BLACK);
+        lblDetalleCondition.setText(Nombres + " estas " + condicion);
+    }//GEN-LAST:event_btnCalcularActionPerformed
+
+    private void btnDetalleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDetalleActionPerformed
+        int fila = tbAlumnos.getSelectedRow();
+        if (fila == -1) {
+            return;
+        }
+
+        String Nombres = tbAlumnos.getValueAt(fila, 0).toString();
+        String Nota1 = tbAlumnos.getValueAt(fila, 1).toString();
+        String Nota2 = tbAlumnos.getValueAt(fila, 2).toString();
+        String Nota3 = tbAlumnos.getValueAt(fila, 3).toString();
+
+        Alumno al = new Alumno();
+        al.setNombres(Nombres);
+        al.setNota1(Float.parseFloat(Nota1));
+        al.setNota2(Float.parseFloat(Nota2));
+        al.setNota3(Float.parseFloat(Nota3));
+
+        txtNombres.setText(Nombres);
+        txtNombres.setEditable(false);
+        txtNota1.setText(Nota1);
+        txtNota1.setEditable(false);
+        txtNota2.setText(Nota2);
+        txtNota2.setEditable(false);
+        txtNota3.setText(Nota3);
+        txtNota3.setEditable(false);
+        txtPromedio.setText("");
+        lblDetalleCondition.setText("");
+        editando = true;
+
+        dlgAgregar.pack();
+        dlgAgregar.setLocationRelativeTo(this);
+        dlgAgregar.setVisible(true);
+    }//GEN-LAST:event_btnDetalleActionPerformed
 
     /**
      * @param args the command line arguments
@@ -366,7 +443,6 @@ public class frmAlumnos extends javax.swing.JFrame {
                     rs.getFloat("nota_3")};
                 model.addRow(alumno);
             }
-
         } catch (SQLException ex) {
             // handle any errors
             System.out.println("SQLException: " + ex.getMessage());
@@ -400,11 +476,61 @@ public class frmAlumnos extends javax.swing.JFrame {
         tbAlumnos.setModel(model);
     }
 
+    private void guardarAlumno(Alumno al) {
+        DefaultTableModel model = (DefaultTableModel) tbAlumnos.getModel();
+        Connection cn = conn.getConn();
+        PreparedStatement stmt = null;
+
+        try {
+            stmt = cn.prepareStatement("INSERT INTO alumnos (nombres, nota_1, nota_2, nota_3) VALUES (?,?,?,?)");
+            stmt.setString(1, al.getNombres());
+            stmt.setFloat(2, al.getNota1());
+            stmt.setFloat(3, al.getNota2());
+            stmt.setFloat(4, al.getNota3());
+
+            if (stmt.executeUpdate() > 0) {
+                Object[] alumno = new Object[]{al.getNombres(), al.getNota1(), al.getNota2(), al.getNota3()};
+                model.addRow(alumno);
+            }
+
+        } catch (SQLException ex) {
+            // handle any errors
+            System.out.println("SQLException: " + ex.getMessage());
+            System.out.println("SQLState: " + ex.getSQLState());
+            System.out.println("VendorError: " + ex.getErrorCode());
+        } finally {
+            if (stmt != null) {
+                try {
+                    stmt.close();
+                } catch (SQLException sqlEx) {
+                } // ignore
+
+                stmt = null;
+            }
+        }
+
+        tbAlumnos.setModel(model);
+    }
+
+    private void reiniciarFormulario() {
+        txtNombres.setEditable(true);
+        txtNota1.setEditable(true);
+        txtNota2.setEditable(true);
+        txtNota3.setEditable(true);
+        txtNombres.setText("");
+        txtNota1.setText("");
+        txtNota2.setText("");
+        txtNota3.setText("");
+        txtPromedio.setText("");
+        lblDetalleCondition.setText("");
+        editando = false;
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAgregar;
+    private javax.swing.JButton btnCalcular;
+    private javax.swing.JButton btnDetalle;
+    private javax.swing.JButton btnNuevo;
     private javax.swing.JDialog dlgAgregar;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
